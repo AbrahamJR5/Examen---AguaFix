@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity('WATER_REPORT')
 export class Report {
@@ -16,6 +21,13 @@ export class Report {
 
   @Column()
   reporterPhone: string;
+
+  // Historical reports predate photo uploads; new reports require a photo.
+  @Column({ type: 'varchar', nullable: true })
+  photoUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  repairPhotoUrl: string | null;
 
   @Column({ default: false })
   isResolved: boolean;

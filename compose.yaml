@@ -1,23 +1,53 @@
+name: aguafix-examen
+
+x-api: &api-settings
+  image: ${DOCKER_USER:-cvabraham13}/aguafix-api:latest
+  env_file: .env
+  environment:
+    DB_HOST: postgres
+    DB_PORT: 5432
+    PORT: 3000
+
 services:
   postgres:
-    image: postgis/postgis:16-master
-    container_name: aguafix-db
-    ports:
-      - 5432:5432
+    image: postgres:16-alpine
     environment:
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-    volumes:
-      - postgres_data_db:/var/lib/postgresql
- 
-  redis:
-    image: redis
-    container_name: aguafix-redis
+      POSTGRES_USER: ${DB_USERNAME:?Completa DB_USERNAME en .env}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Completa DB_PASSWORD en .env}
+      POSTGRES_DB: ${DB_NAME:?Completa DB_NAME en .env}
+    # 5433 avoids the 5432 port used by the user's other projects.
     ports:
-      - 6379:6379
+      - '127.0.0.1:${DB_PORT:-5433}:5432'
     volumes:
-      - redis_data_db:/data
- 
+      - postgres_examen_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  migrate:
+    <<: *api-settings
+    command:
+      [
+        'node',
+        'node_modules/typeorm/cli.js',
+        'migration:run',
+        '-d',
+        'dist/db/data-source.js',
+      ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+
+  api:
+    <<: *api-settings
+    ports:
+      - '127.0.0.1:${PORT:-3000}:3000'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
 volumes:
-  postgres_data_db:
-  redis_data_db:
+  postgres_examen_data:

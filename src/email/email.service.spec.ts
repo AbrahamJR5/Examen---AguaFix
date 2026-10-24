@@ -1,18 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { jest } from '@jest/globals';
 import { EmailService } from './email.service';
 
 describe('EmailService', () => {
-  let service: EmailService;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [EmailService],
-    }).compile();
-
-    service = module.get<EmailService>(EmailService);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('sends HTML to the requested recipient', async () => {
+    const sendMail = jest.fn().mockResolvedValue({ messageId: 'test-message' });
+    const service = new EmailService();
+    Object.assign(service, { transporter: { sendMail } });
+    await service.sendEmail(
+      'crew@example.invalid',
+      'Nuevo reporte',
+      '<img src="https://example.com/photo.png">',
+    );
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'crew@example.invalid',
+        subject: 'Nuevo reporte',
+        html: '<img src="https://example.com/photo.png">',
+      }),
+    );
   });
 });

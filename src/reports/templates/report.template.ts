@@ -5,7 +5,23 @@ export interface ReportTemplateDto {
   reporterPhone: string;
 }
 
-export const generateReportTemplate = (dto: ReportTemplateDto): string => {
+const escapeHtml = (value: string): string =>
+  value.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[character]!,
+  );
+
+export const generateReportTemplate = (
+  dto: ReportTemplateDto,
+  photoUrl: string,
+): string => {
   return `
     <!DOCTYPE html>
     <html lang="es">
@@ -25,21 +41,23 @@ export const generateReportTemplate = (dto: ReportTemplateDto): string => {
           <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
             <tr>
               <th style="padding: 10px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: left; width: 35%;">📍 Dirección</th>
-              <td style="padding: 10px; border: 1px solid #ddd;">${dto.address}</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(dto.address)}</td>
             </tr>
             <tr>
               <th style="padding: 10px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: left;">📝 Descripción</th>
-              <td style="padding: 10px; border: 1px solid #ddd;">${dto.description}</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(dto.description)}</td>
             </tr>
             <tr>
               <th style="padding: 10px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: left;">⚠️ Severidad</th>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; text-transform: uppercase;">${dto.severity}</td>
+              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; text-transform: uppercase;">${escapeHtml(dto.severity)}</td>
             </tr>
             <tr>
               <th style="padding: 10px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: left;">📞 Tel. Contacto</th>
-              <td style="padding: 10px; border: 1px solid #ddd;">${dto.reporterPhone}</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(dto.reporterPhone)}</td>
             </tr>
           </table>
+          <p>Foto de la fuga:</p>
+          <img src="${escapeHtml(photoUrl)}" alt="Foto de la fuga reportada" width="520" style="display: block; max-width: 100%; height: auto; border-radius: 6px;" />
           
           <p style="margin-top: 20px; font-size: 14px; color: #666;">Por favor, asigne una cuadrilla para su atención lo antes posible.</p>
         </div>

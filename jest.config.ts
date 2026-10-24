@@ -15,8 +15,10 @@ const config: Config = {
   rootDir: '.',
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.ts$': ['ts-jest', { tsconfig: 'test/tsconfig.json', useESM: true }],
   },
+  // Nest 12 ships ESM; use Node's VM modules for tests on Node 22.
+  extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: pathsToModuleNameMapper(paths, { prefix: '<rootDir>/' }),
   collectCoverageFrom: [
     'src/**/*.(t|j)s',
@@ -25,6 +27,7 @@ const config: Config = {
   ],
   coverageDirectory: './coverage',
   testEnvironment: 'node',
+  setupFiles: ['<rootDir>/test/setup.ts'],
 };
 
 export default config;

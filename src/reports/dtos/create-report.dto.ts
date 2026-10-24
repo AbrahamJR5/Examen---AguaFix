@@ -10,7 +10,7 @@ export class CreateReportDto {
   description: string;
 
   @IsString()
-  @IsIn(['low', 'medium', 'high']) 
+  @IsIn(['low', 'medium', 'high'])
   severity: string;
 
   @IsString()

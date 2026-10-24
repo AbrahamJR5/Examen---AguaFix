@@ -1,0 +1,196 @@
+{
+  "info": {
+    "name": "AguaFix Examen con S3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Selecciona una imagen real en photo antes de enviar el POST. Postman genera Content-Type automáticamente."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "userEmail",
+      "value": ""
+    },
+    {
+      "key": "userPassword",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1 Registro del primer parcial",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{baseUrl}}/api/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Ciudadano de prueba\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Usa datos de prueba. No muestres credenciales en el video."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 Login del primer parcial",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Usa datos de prueba. No muestres credenciales en el video."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 Crear reporte con foto",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{baseUrl}}/reports",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "address",
+              "value": "Calle de prueba 123",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Fuga en la banqueta",
+              "type": "text"
+            },
+            {
+              "key": "severity",
+              "value": "high",
+              "type": "text"
+            },
+            {
+              "key": "reporterPhone",
+              "value": "5551234567",
+              "type": "text"
+            },
+            {
+              "key": "photo",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "description": "Usa datos de prueba. No muestres credenciales en el video."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 Listar reportes y URLs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/reports",
+        "description": "Usa datos de prueba. No muestres credenciales en el video."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 Sin foto debe fallar",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{baseUrl}}/reports",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "address",
+              "value": "Calle de prueba 123",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Fuga en la banqueta",
+              "type": "text"
+            },
+            {
+              "key": "severity",
+              "value": "high",
+              "type": "text"
+            },
+            {
+              "key": "reporterPhone",
+              "value": "5551234567",
+              "type": "text"
+            }
+          ]
+        },
+        "description": "Usa datos de prueba. No muestres credenciales en el video."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
