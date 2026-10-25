@@ -39,7 +39,8 @@ export class ReportsService {
     const htmlTemplate = generateReportTemplate(createReportDto, photoUrl);
     await this.emailService.sendEmail(
       envs.crewEmail,
-      `🚨 Nuevo reporte de fuga - Prioridad: ${createReportDto.severity.toUpperCase()}`,
+      `AguaFix: reporte con fotografía
+ ${createReportDto.severity.toUpperCase()}`,
       htmlTemplate,
     );
 
